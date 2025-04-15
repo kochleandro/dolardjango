@@ -56,7 +56,7 @@ ROOT_URLCONF = "web_django.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],  # solo esta línea debe quedar
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -68,6 +68,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = "web_django.wsgi.application"
 
