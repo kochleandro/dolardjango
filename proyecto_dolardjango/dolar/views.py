@@ -1,6 +1,4 @@
 from django.shortcuts import render
-
-from django.shortcuts import render
 from .utils.predicciones import procesar_excel, generar_grafico_velas
 
 def subir_excel(request):
