@@ -1,5 +1,11 @@
+<h2>Subir archivo Excel y elegir días para predecir</h2>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <input type="file" name="archivo" required>
-    <button type="submit">Subir Excel</button>
-  </form>
+    <label for="archivo">Archivo Excel:</label>
+    <input type="file" name="archivo" required><br><br>
+
+    <label for="dias">Días hacia el futuro:</label>
+    <input type="number" name="dias" min="1" value="60" required><br><br>
+
+    <button type="submit">Generar predicción</button>
+</form>

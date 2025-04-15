@@ -1,2 +1,8 @@
-<h2>Gráfico de Velas</h2>
-<img src="data:image/png;base64,{{ grafico }}">
+<h2>Gráfico de Predicción</h2>
+<img src="data:image/png;base64,{{ grafico }}" alt="Gráfico de predicción" />
+
+<h3>Predicción para el {{ fecha }}: {{ prediccion }}</h3>
+
+<a href="{% url 'subir_excel' %}">Subir otro archivo</a>
+<h3>Predicción para el {{ fecha }} (en {{ dias }} días): {{ prediccion }}</h3>
+

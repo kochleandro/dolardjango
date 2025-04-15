@@ -7,3 +7,9 @@ openpyxl>=3.1
 matplotlib>=3.7
 seaborn>=0.12
 mplfinance
+pandas
+matplotlib
+mplfinance
+scikit-learn
+openpyxl
+
