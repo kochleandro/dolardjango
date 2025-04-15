@@ -1,4 +1,6 @@
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')  # Utilizar un backend que no requiere interfaz gráfica
 import matplotlib.pyplot as plt
 import mplfinance as mpf
 import datetime
@@ -6,6 +8,8 @@ import io
 import base64
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, r2_score
 
 def procesar_excel(excel_file):
     df = pd.read_excel(excel_file)
@@ -19,22 +23,27 @@ def procesar_excel(excel_file):
     df.set_index('Fecha', inplace=True)
     return df
 
-def entrenar_y_predecir(excel_file, dias_futuros=180):
+from sklearn.metrics import mean_squared_error
+
+def entrenar_y_predecir(excel_file, dias_futuros=60):
     df = pd.read_excel(excel_file)
     df['Fecha'] = pd.to_datetime(df['Fecha'])
-    X = df[['Fecha']].apply(lambda col: col.astype(int) / 10**9)  # convertir fechas a timestamp
+    X = df[['Fecha']].apply(lambda col: col.astype(int) / 10**9)
     y = df['Apertura']
 
     X_train, X_test, y_train, y_test = train_test_split(X, y)
-
     modelo = RandomForestRegressor(n_estimators=10)
     modelo.fit(X_train, y_train)
 
+    # Evaluación del modelo
+    y_pred = modelo.predict(X_test)
+    mse = mean_squared_error(y_test, y_pred)
+    r2 = r2_score(y_test, y_pred)
+
+    # Predicción futura
     fecha_actual = df['Fecha'].max()
     fecha_futura = fecha_actual + datetime.timedelta(days=dias_futuros)
-    X_futuro = pd.DataFrame({'Fecha': [fecha_futura]})
-    X_futuro = X_futuro.apply(lambda col: col.astype(int) / 10**9)
-
+    X_futuro = pd.DataFrame({'Fecha': [fecha_futura]}).apply(lambda col: col.astype(int) / 10**9)
     prediccion = modelo.predict(X_futuro)[0]
 
     # Graficar
@@ -51,7 +60,9 @@ def entrenar_y_predecir(excel_file, dias_futuros=180):
     buffer.seek(0)
     image_base64 = base64.b64encode(buffer.read()).decode('utf-8')
     plt.close()
-    return image_base64, prediccion, fecha_futura
+
+    return image_base64, round(prediccion, 2), fecha_futura, round(mse, 2), round(r2, 2)
+
 
 
 def generar_grafico_velas(df):
