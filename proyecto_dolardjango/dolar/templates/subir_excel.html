@@ -1,14 +1,27 @@
-<h2>Subir archivo Excel y elegir días para predecir</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <label for="archivo">Archivo Excel:</label>
-    <input type="file" name="archivo" required><br><br>
+{% extends "base.html" %}
 
-    <label for="dias">Días hacia el futuro:</label>
-    <input type="number" name="dias" min="1" value="60" required><br><br>
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Subir archivo Excel</h2>
+    <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
 
-    <button type="submit">Generar predicción</button>
-</form>
+        <div class="mb-3">
+            <label for="archivo" class="form-label">Archivo Excel</label>
+            <input type="file" class="form-control" id="archivo" name="archivo" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="dias" class="form-label">Cantidad de días para predecir</label>
+            <input type="number" class="form-control" id="dias" name="dias" value="60" min="1" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Subir y Predecir</button>
+    </form>
+</div>
+{% endblock %}
+
+
 {% if messages %}
   {% for message in messages %}
     <div class="alert alert-danger">{{ message }}</div>

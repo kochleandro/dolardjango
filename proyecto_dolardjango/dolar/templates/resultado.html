@@ -1,11 +1,39 @@
-<h2>Gráfico de Predicción</h2>
-<img src="data:image/png;base64,{{ grafico }}" alt="Gráfico de predicción" />
+{% extends "base.html" %}
 
-<h3>Predicción para el {{ fecha }}: {{ prediccion }}</h3>
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Resultados de la Predicción</h2>
 
-<a href="{% url 'subir_excel' %}">Subir otro archivo</a>
-<h3>Predicción para el {{ fecha }} (en {{ dias }} días): {{ prediccion }}</h3>
-<p>Error cuadrático medio (MSE) del modelo: <strong>{{ mse }}</strong></p>
-<p>Score R² del modelo: <strong>{{ r2 }}</strong></p>
+    <!-- Gráfico de Predicción -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>Gráfico de Predicción</strong>
+        </div>
+        <div class="card-body text-center">
+            <img src="data:image/png;base64,{{ grafico }}" alt="Gráfico de predicción" class="img-fluid">
+        </div>
+    </div>
+
+    <!-- Detalles de la Predicción -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>Detalles</strong>
+        </div>
+        <div class="card-body">
+            <p><strong>Fecha de predicción:</strong> {{ fecha }}</p>
+            <p><strong>Días a futuro:</strong> {{ dias }}</p>
+            <p><strong>Valor predicho:</strong> {{ prediccion }}</p>
+            <p><strong>Error cuadrático medio (MSE):</strong> {{ mse }}</p>
+            <p><strong>Coeficiente de determinación (R²):</strong> {{ r2 }}</p>
+        </div>
+    </div>
+
+    <!-- Botón para nueva predicción -->
+    <div class="text-center">
+        <a href="{% url 'subir_excel' %}" class="btn btn-primary">Realizar otra predicción</a>
+    </div>
+</div>
+{% endblock %}
+
 
 
