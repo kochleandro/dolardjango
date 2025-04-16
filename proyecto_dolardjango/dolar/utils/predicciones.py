@@ -2,55 +2,60 @@ import pandas as pd
 import matplotlib
 matplotlib.use('Agg')  # Utilizar un backend que no requiere interfaz gráfica
 import matplotlib.pyplot as plt
-import mplfinance as mpf
 import datetime
 import io
 import base64
+import numpy as np
+import math
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_squared_error, r2_score
-import math
 
-def procesar_excel(excel_file):
+def entrenar_y_predecir(excel_file, dias_futuros=60):
     df = pd.read_excel(excel_file)
+    df['Fecha'] = pd.to_datetime(df['Fecha'])
+
+    # Renombrar columnas
     df = df.rename(columns={
         'Ultimo': 'Close',
         'Apertura': 'Open',
         'Maximo': 'High',
         'Minimo': 'Low'
     })
-    df['Fecha'] = pd.to_datetime(df['Fecha'])
-    df.set_index('Fecha', inplace=True)
-    return df
 
-from sklearn.metrics import mean_squared_error
+    # Fecha en segundos
+    df['Fecha_num'] = df['Fecha'].astype(np.int64) // 10**9
 
-def entrenar_y_predecir(excel_file, dias_futuros=60):
-    df = pd.read_excel(excel_file)
-    df['Fecha'] = pd.to_datetime(df['Fecha'])
-    X = df[['Fecha']].apply(lambda col: col.astype(int) / 10**9)
-    y = df['Apertura']
+    # Tendencia de los últimos 5 días
+    df['Trend'] = df['Open'].rolling(window=30).apply(lambda x: np.polyfit(range(len(x)), x, 1)[0], raw=True)
+    df.dropna(inplace=True)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y)
-    modelo = RandomForestRegressor(n_estimators=10)
+    X = df[['Fecha_num', 'Trend']]
+    y = df['Open']
+
+    # Split aleatorio
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+    modelo = RandomForestRegressor(n_estimators=100)
     modelo.fit(X_train, y_train)
 
-    # Evaluación del modelo
     y_pred = modelo.predict(X_test)
     mse = mean_squared_error(y_test, y_pred)
+    rmse = math.sqrt(mse)
     r2 = r2_score(y_test, y_pred)
-    rmse = math.sqrt(mse)  # Calcula la raíz cuadrada del MSE
 
     # Predicción futura
     fecha_actual = df['Fecha'].max()
     fecha_futura = fecha_actual + datetime.timedelta(days=dias_futuros)
-    X_futuro = pd.DataFrame({'Fecha': [fecha_futura]}).apply(lambda col: col.astype(int) / 10**9)
+    fecha_num_futura = int(fecha_futura.timestamp())
+
+    trend_futura = df['Trend'].iloc[-1]
+    X_futuro = pd.DataFrame({'Fecha_num': [fecha_num_futura], 'Trend': [trend_futura]})
     prediccion = modelo.predict(X_futuro)[0]
 
     # Graficar
-    fig, ax = plt.subplots(figsize=(10,5))
-    plt.plot(df['Fecha'], df['Ultimo'], label='Datos reales', color='blue')
+    fig, ax = plt.subplots(figsize=(10, 5))
+    plt.plot(df['Fecha'], df['Close'], label='Datos reales', color='blue')
     plt.plot(fecha_futura, prediccion, marker='o', color='red', label='Predicción')
     plt.xlabel('Fecha')
     plt.ylabel('Cotización')
