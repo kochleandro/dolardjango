@@ -10,6 +10,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_squared_error, r2_score
+import math
 
 def procesar_excel(excel_file):
     df = pd.read_excel(excel_file)
@@ -39,6 +40,7 @@ def entrenar_y_predecir(excel_file, dias_futuros=60):
     y_pred = modelo.predict(X_test)
     mse = mean_squared_error(y_test, y_pred)
     r2 = r2_score(y_test, y_pred)
+    rmse = math.sqrt(mse)  # Calcula la raíz cuadrada del MSE
 
     # Predicción futura
     fecha_actual = df['Fecha'].max()
@@ -61,15 +63,4 @@ def entrenar_y_predecir(excel_file, dias_futuros=60):
     image_base64 = base64.b64encode(buffer.read()).decode('utf-8')
     plt.close()
 
-    return image_base64, round(prediccion, 2), fecha_futura, round(mse, 2), round(r2, 2)
-
-
-
-def generar_grafico_velas(df):
-    buffer = io.BytesIO()
-    mpf.plot(df, type='candle', style='yahoo', mav=(3, 6),
-             title='Gráfico de Velas',
-             savefig=dict(fname=buffer, dpi=100, format='png'))
-    buffer.seek(0)
-    image_base64 = base64.b64encode(buffer.read()).decode('utf-8')
-    return image_base64
+    return image_base64, round(prediccion, 2), fecha_futura, round(mse, 2), round(rmse, 2), round(r2, 2)

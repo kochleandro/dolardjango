@@ -23,8 +23,12 @@
             <p><strong>Fecha de predicción:</strong> {{ fecha }}</p>
             <p><strong>Días a futuro:</strong> {{ dias }}</p>
             <p><strong>Valor predicho:</strong> {{ prediccion }}</p>
-            <p><strong>Error cuadrático medio (MSE):</strong> {{ mse }}</p>
+            <p><strong>Error cuadrático medio (MSE):</strong> {{ mse }}</p> 
+            <p>El MSE (Mean Squared Error) mide el promedio de los errores al cuadrado entre los valores predichos y los reales.<br>
+            👉 O sea, en promedio, el modelo podría errar por<strong> ${{ rmse }} </strong> en la cotización del dólar.</p>
             <p><strong>Coeficiente de determinación (R²):</strong> {{ r2 }}</p>
+            <p> 🧠 Un MSE bajo y un R² alto son buenos signos.<br>
+                ⚠️ Pero R² = 1.0 exacto puede ser sospechoso.</p>
         </div>
     </div>
 

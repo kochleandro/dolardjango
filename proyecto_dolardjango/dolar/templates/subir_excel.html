@@ -3,20 +3,20 @@
 {% block content %}
 <div class="container mt-5">
     <h2 class="mb-4">Subir archivo Excel</h2>
-    <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
-        {% csrf_token %}
-
-        <div class="mb-3">
-            <label for="archivo" class="form-label">Archivo Excel</label>
-            <input type="file" class="form-control" id="archivo" name="archivo" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="dias" class="form-label">Cantidad de días para predecir</label>
-            <input type="number" class="form-control" id="dias" name="dias" value="60" min="1" required>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Subir y Predecir</button>
+    <form method="post" enctype="multipart/form-data" class="p-4 border rounded bg-light">
+      {% csrf_token %}
+      
+      <div class="mb-3">
+        <label for="archivo" class="form-label">Seleccionar archivo Excel</label>
+        <input class="form-control" type="file" name="archivo" id="archivo" required>
+      </div>
+    
+      <div class="mb-3">
+        <label for="dias" class="form-label">Días a predecir</label>
+        <input class="form-control" type="number" name="dias" id="dias" value="60" min="1" required>
+      </div>
+    
+      <button type="submit" class="btn btn-primary">Subir y Predecir</button>
     </form>
 </div>
 {% endblock %}
@@ -24,6 +24,10 @@
 
 {% if messages %}
   {% for message in messages %}
-    <div class="alert alert-danger">{{ message }}</div>
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
   {% endfor %}
 {% endif %}
+
